@@ -1,23 +1,19 @@
-import "../pages/index.css"; // подключаем файлы проекта
-
+// подключаем файлы проекта
+import "../pages/index.css";
+import { initialCards } from "./cards.js";
 // подключаем функций
 import { openPopup, closePopup } from "./modal.js"; //работа с попапами
-import {
-  placesList,
-  createCard,
-  deleteCard,
-  likeCardCallback,
-  imageCallback,
-} from "./card.js";
+import { createCard, deleteCard, likeCardCallback } from "./card.js";
 
 // Получение DOM-элементов
+const placesList = document.querySelector(".places__list"); // выводим карточек на страницу
 // попапы
 const popups = document.querySelectorAll(".popup"); //все попапы
 const editPopup = document.querySelector(".popup_type_edit"); //редактирование
 const newCardPopup = document.querySelector(".popup_type_new-card"); //добавление новой карточки
-export const imagePopup = document.querySelector(".popup_type_image"); //просмотр изображения в полном размере
-export const popupImage = imagePopup.querySelector(".popup__image"); // для отображения увеличенного изображения карточки
-export const popupCaption = imagePopup.querySelector(".popup__caption"); //подпись к изображению
+const imagePopup = document.querySelector(".popup_type_image"); //просмотр изображения в полном размере
+const popupImage = imagePopup.querySelector(".popup__image"); // для отображения увеличенного изображения карточки
+const popupCaption = imagePopup.querySelector(".popup__caption"); //подпись к изображению
 // формы
 const editForm = document.forms["edit-profile"]; //редактирование
 const nameInput = editForm.elements.name; // поле ввода имени
@@ -50,17 +46,15 @@ editForm.addEventListener("submit", function (evt) {
   closePopup(editPopup); // закрываем попап
 });
 
-//закрытие попапа
-document.addEventListener("click", (evt) => {
-  // закрытие по крестику
-  if (evt.target.classList.contains("popup__close")) {
-    const popup = evt.target.closest(".popup");
-    closePopup(popup);
-  }
-  // закрытие по оверлею
-  if (evt.target.classList.contains("popup")) {
-    closePopup(evt.target);
-  }
+//закрытие попапа по крестику и оверлею
+popups.forEach((popup) => {
+  const closeButton = popup.querySelector(".popup__close");
+  closeButton.addEventListener("click", () => closePopup(popup));
+  popup.addEventListener("mousedown", (evt) => {
+    if (evt.target === popup) {
+      closePopup(popup);
+    }
+  });
 });
 
 //добавление новой карточки
@@ -96,3 +90,26 @@ newCardForm.addEventListener("submit", function (evt) {
 popups.forEach((popup) => {
   popup.classList.add("popup_is-animated");
 });
+
+// очищаем список перед добавлением
+placesList.innerHTML = "";
+
+// добавляем каждую карточку из массива initialCards
+initialCards.forEach((cardData) => {
+  const cardElement = createCard(
+    cardData,
+    deleteCard,
+    likeCardCallback,
+    imageCallback
+  );
+
+  placesList.appendChild(cardElement);
+});
+
+// Функция обработки клика по изображению
+function imageCallback(cardData) {
+  popupImage.src = cardData.link;
+  popupImage.alt = cardData.alt || cardData.name;
+  popupCaption.textContent = cardData.name;
+  openPopup(imagePopup);
+}

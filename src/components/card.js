@@ -1,7 +1,3 @@
-import { initialCards } from "./cards.js";
-import { openPopup } from "./modal.js";
-import { imagePopup, popupImage, popupCaption } from "./index.js";
-
 // Функция создания карточки
 export function createCard(
   cardData,
@@ -40,31 +36,6 @@ export function deleteCard(cardElement) {
   cardElement.remove();
 }
 
-// выводим карточек на страницу
-export const placesList = document.querySelector(".places__list");
-
-// очищаем список перед добавлением
-placesList.innerHTML = "";
-
-// добавляем каждую карточку из массива initialCards
-initialCards.forEach((cardData) => {
-  const cardElement = createCard(
-    cardData,
-    deleteCard,
-    likeCardCallback,
-    imageCallback
-  );
-  placesList.appendChild(cardElement);
-});
-
 export function likeCardCallback(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
-}
-
-// Функция обработки клика по изображению
-export function imageCallback(cardData) {
-  popupImage.src = cardData.link;
-  popupImage.alt = cardData.alt || cardData.name;
-  popupCaption.textContent = cardData.name;
-  openPopup(imagePopup);
 }
