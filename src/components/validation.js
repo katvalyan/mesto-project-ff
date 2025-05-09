@@ -1,13 +1,3 @@
-//конфигурация валидации
-export const validationConfig = {
-  formSelector: ".popup__form", //селектор форм
-  inputSelector: ".popup__input", //селектор полей ввода
-  submitButtonSelector: ".popup__button", //селектор кнопок
-  inactiveButtonClass: "popup__button_disabled", //класс для неактивной кнопки
-  inputErrorClass: "popup__input_type_error", //класс для невалидного поля
-  errorClass: "popup__error_visible", //класс для видимой ошибки
-};
-
 //показывать ошибку
 const showInputError = (formElement, inputElement, errorMessage, config) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`); //находим элемент ошибки

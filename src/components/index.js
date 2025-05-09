@@ -3,11 +3,7 @@ import "../pages/index.css";
 // подключаем функций
 import { openPopup, closePopup } from "./modal.js"; //работа с попапами
 import { createCard, deleteCard, likeCardHandler } from "./card.js";
-import {
-  enableValidation,
-  validationConfig,
-  clearValidation,
-} from "./validation.js"; //работа с валидацией
+import { enableValidation, clearValidation } from "./validation.js"; //работа с валидацией
 import {
   getProfile,
   getCards,
@@ -16,8 +12,6 @@ import {
   updateAvatar,
 } from "./api.js"; //работа с API
 import { loadingButton } from "./utils.js"; //вспомогательная функция управления состоянием кнопки
-//подключаем валидацию
-enableValidation(validationConfig);
 
 // получение DOM-элементов
 const placesList = document.querySelector(".places__list"); // выводим карточек на страницу
@@ -50,6 +44,19 @@ const profileImage = document.querySelector(".profile__image");
 
 //переменная для идентификации текущего пользователя
 let profileId;
+
+//конфигурация валидации
+const validationConfig = {
+  formSelector: ".popup__form", //селектор форм
+  inputSelector: ".popup__input", //селектор полей ввода
+  submitButtonSelector: ".popup__button", //селектор кнопок
+  inactiveButtonClass: "popup__button_disabled", //класс для неактивной кнопки
+  inputErrorClass: "popup__input_type_error", //класс для невалидного поля
+  errorClass: "popup__error_visible", //класс для видимой ошибки
+};
+
+//подключаем валидацию
+enableValidation(validationConfig);
 
 //открытие попапа профиля
 editButton.addEventListener("click", () => {
@@ -109,8 +116,8 @@ newCardForm.addEventListener("submit", function (evt) {
       //отображаем новую карточку
       renderCard(newCard, placesList, true, profileId);
       //очищаем формы
-      clearValidation(newCardForm, validationConfig); //сбрасываем валидацию
       newCardForm.reset(); //очищаем поля
+      clearValidation(newCardForm, validationConfig); //сбрасываем валидацию
       closePopup(newCardPopup);
     })
     .catch((error) => {
@@ -165,7 +172,7 @@ function renderCard(cardData, container, prepend = false, profileId) {
   const cardElement = createCard(
     cardData,
     deleteCard,
-    (evt) => likeCardHandler(evt, cardData),
+    likeCardHandler,
     handleCardImageClick,
     profileId
   );
@@ -187,8 +194,8 @@ avatarForm.addEventListener("submit", (evt) => {
     .then((updateAvatarData) => {
       profileImage.style.backgroundImage = `url('${updateAvatarData.avatar}')`; //обновляем аватарку
       //очищаем формы
-      clearValidation(avatarForm, validationConfig); //сбрасываем валидацию
       avatarForm.reset(); //очищаем поле
+      clearValidation(avatarForm, validationConfig); //сбрасываем валидацию
       closePopup(avatarPopup);
     })
     .catch((error) => {
